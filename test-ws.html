@@ -1,0 +1,53 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>STOMP Quick Test</title>
+<style>body{font-family:system-ui;margin:20px}input,button{padding:8px;margin:4px}</style>
+
+<!-- CDNs en cascada -->
+<script src="https://unpkg.com/@stomp/stompjs@7.0.0/bundles/stomp.umd.min.js"
+        onerror="var s=document.createElement('script');s.src='https://cdn.skypack.dev/@stomp/stompjs@7?min';document.head.appendChild(s)">
+</script>
+<script>
+  // Si también falla skypack, intentamos jsDelivr con otra ruta
+  if(!window.StompJs){
+    var s=document.createElement('script');
+    s.src='https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.0.0/bundles/stomp.umd.min.js';
+    document.head.appendChild(s);
+  }
+</script>
+
+<h3>STOMP Test</h3>
+<label>Endpoint: <input id="url" value="ws://localhost:8080/ws" size="40"></label><br>
+<label>Mensaje: <input id="msg" value="Hola Jose!"></label><br>
+<button id="connect">Conectar</button>
+<button id="sub" disabled>Suscribir /topic/data</button>
+<button id="send" disabled>Enviar a /app/feed</button>
+<pre id="log" style="background:#111;color:#eee;padding:8px;height:200px;overflow:auto"></pre>
+
+<script>
+const log = m => { const el = document.getElementById('log'); el.textContent += m+'\n'; el.scrollTop = el.scrollHeight; };
+let client, sub;
+document.getElementById('connect').onclick = () => {
+  if(!window.StompJs){ log('No se pudo cargar stompjs. Usa la opción local (B).'); return; }
+  client = new StompJs.Client({
+    brokerURL: document.getElementById('url').value.trim(),
+    connectHeaders: {'accept-version':'1.2'},
+    debug: s => log(s),
+    onConnect: () => { log('CONNECTED'); subBtn.disabled=false; sendBtn.disabled=false; }
+  });
+  client.activate();
+  const subBtn = document.getElementById('sub');
+  const sendBtn = document.getElementById('send');
+};
+document.getElementById('sub').onclick = () => {
+  if(!client || !client.connected) return log('No conectado');
+  sub = client.subscribe('/topic/data', msg => log('<< ' + msg.body));
+  log('Suscrito /topic/data'); document.getElementById('sub').disabled = true;
+};
+document.getElementById('send').onclick = () => {
+  if(!client || !client.connected) return log('No conectado');
+  const body = document.getElementById('msg').value;
+  client.publish({destination:'/app/feed', body});
+  log('>> ' + body);
+};
+</script>
