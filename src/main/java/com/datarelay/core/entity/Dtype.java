@@ -16,4 +16,12 @@ public class Dtype {
     public Dtype() {
 
     }
+
+    public String getDtype() {
+        return dtype;
+    }
+
+    public void setDtype(String dtype) {
+        this.dtype = dtype;
+    }
 }
