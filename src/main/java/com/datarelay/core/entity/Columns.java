@@ -40,4 +40,35 @@ public class Columns {
     @Column(name = "position", columnDefinition = "SMALLINT", nullable = false)
     private int position;
 
+    public DatasetSchema getSchemaId() {
+        return schemaId;
+    }
+
+    public void setSchemaId(DatasetSchema schemaId) {
+        this.schemaId = schemaId;
+    }
+
+    public Dtype getDtype() {
+        return dtype;
+    }
+
+    public void SetDtype(Dtype dtype) {
+        this.dtype = dtype;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
+    }
 }
