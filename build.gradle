@@ -40,5 +40,28 @@ dependencies {
 }
 
 tasks.named('test') {
-	useJUnitPlatform()
+    useJUnitPlatform()
+
+    testLogging {
+        events "PASSED", "SKIPPED", "FAILED", "STANDARD_OUT", "STANDARD_ERROR"
+        exceptionFormat "full"
+        showStandardStreams = true
+    }
+
+    // Hard-print any failure stacktrace to the console
+    afterTest { desc, result ->
+        if (result.resultType.toString() == "FAILURE" && result.exception) {
+            println "\n==== FAILURE: ${desc.className}.${desc.name} ===="
+            def sw = new StringWriter()
+            def pw = new PrintWriter(sw)
+            result.exception.printStackTrace(pw)
+            pw.flush()
+            println sw.toString()
+            println "==== END FAILURE ====\n"
+        }
+    }
+
+    // Optional: extra Spring/Hibernate logs during context boot
+    systemProperty "logging.level.org.springframework", "DEBUG"
+    systemProperty "logging.level.org.hibernate", "DEBUG"
 }
