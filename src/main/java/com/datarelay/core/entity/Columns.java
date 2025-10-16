@@ -38,7 +38,7 @@ public class Columns {
         )
     private DatasetSchema schema;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(
         name = "dtype",
         foreignKey = @ForeignKey(name = "FK_COLUMNS_DTYPE")
