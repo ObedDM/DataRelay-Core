@@ -25,9 +25,7 @@ public class Columns {
     @EmbeddedId
     private ColumnsId id;
  
-    public Columns() {
-
-    }
+    public Columns() { }
 
     @MapsId("schemaId")
     @ManyToOne
@@ -48,37 +46,19 @@ public class Columns {
     @Column(name = "position", columnDefinition = "SMALLINT", nullable = false)
     private int position;
 
-    public ColumnsId getId() {
-        return id;
-    }
+    // getters and setters
 
-    public void setId(ColumnsId id) {
-        this.id = id;
-    }
+    public ColumnsId getId() { return id; }
+    public void setId(ColumnsId id) { this.id = id; }
 
-    public DatasetSchema getSchema() {
-        return schema;
-    }
+    public DatasetSchema getSchema() { return schema; }
+    public void setSchema(DatasetSchema schema) { this.schema = schema; }
 
-    public void setSchema(DatasetSchema schema) {
-        this.schema = schema;
-    }
+    public Dtype getDtype() { return dtype; }
+    public void setDtype(Dtype dtype) { this.dtype = dtype; }
 
-    public Dtype getDtype() {
-        return dtype;
-    }
-
-    public void setDtype(Dtype dtype) {
-        this.dtype = dtype;
-    }
-
-    public int getPosition() {
-        return position;
-    }
-
-    public void setPosition(int position) {
-        this.position = position;
-    }
+    public int getPosition() { return position; }
+    public void setPosition(int position) { this.position = position; }
 
     @Embeddable
     public static class ColumnsId implements Serializable {
@@ -88,22 +68,14 @@ public class Columns {
         
         @Column(name = "name", columnDefinition = "TEXT", nullable = false)
         private String name;
+
+        // getters and setters
         
-        public String getName() {
-            return name;
-        }
+        public String getName() { return name; }
+        public void setName(String name) { this.name = name; }
 
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public UUID getSchemaId() {
-            return schemaId;
-        }
-
-        public void setSchemaId(UUID schemaId) {
-            this.schemaId = schemaId;
-        }
+        public UUID getSchemaId() { return schemaId; }
+        public void setSchemaId(UUID schemaId) { this.schemaId = schemaId; }
 
         @Override
         public boolean equals(Object o) {
@@ -117,6 +89,5 @@ public class Columns {
         public int hashCode() {
             return Objects.hash(schemaId, name);
         }
-
     }
 }
