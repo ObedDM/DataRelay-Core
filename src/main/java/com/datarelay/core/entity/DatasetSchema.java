@@ -27,7 +27,7 @@ public class DatasetSchema {
     private UUID schemaId;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "FK_SCHEMA_USERS"))
+    @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "FK_SCHEMA_USERS"), nullable = false)
     private Users userId;
 
     @Column(nullable = false, columnDefinition = "TEXT")
