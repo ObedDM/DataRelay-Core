@@ -1,5 +1,8 @@
 package com.datarelay.core.entity;
 
+import java.time.Instant;
+import java.util.UUID;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
@@ -11,10 +14,19 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "dtype")
-public class Dtype {
-    
+@Table(name = "user")
+public class User {
+
     @Id
-    @Column("dtype")
-    private String dtype;
+    @Column("user_id")
+    private UUID userId;
+
+    @Column("username")
+    private String username;
+
+    @Column("password")
+    private String password;
+
+    @Column("created_at")
+    private Instant createdAt;
 }
