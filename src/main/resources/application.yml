@@ -1,11 +1,19 @@
 spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5432/your_database_name
-    username: your_username
-    password: your_password
+  config:
+    import: optional:file:.env[.properties]
+  
   r2dbc:
-    url: r2dbc:postgresql://localhost:5432/your_database_name
-    username: your_username
-    password: your_password
-  jwt:
-    key: ${JWT_KEY}
+    url: r2dbc:postgresql://localhost:5432/datarelay
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+  flyway:
+    enabled: true
+    url: jdbc:postgresql://localhost:5432/datarelay
+    user: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/datarelay_mongo
+
+jwt:
+  key: ${JWT_KEY}

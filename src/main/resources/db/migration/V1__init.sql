@@ -1,4 +1,4 @@
-CREATE TABLE user (
+CREATE TABLE "user" (
     user_id UUID PRIMARY KEY DEFAULT uuidv7(),
     username VARCHAR(20) NOT NULL UNIQUE,
     password CHAR(60) NOT NULL,
@@ -16,7 +16,7 @@ CREATE TABLE ds_schema(
     description TEXT,
     created_at TIMESTAMP NOT NULL,
 
-    CONSTRAINT fk_schema_user FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE CASCADE,
+    CONSTRAINT fk_schema_user FOREIGN KEY (user_id) REFERENCES "user"(user_id) ON DELETE CASCADE,
     CONSTRAINT uniq_schema_name_userid UNIQUE (name, user_id)
 );
 
@@ -31,4 +31,4 @@ CREATE TABLE feature(
     CONSTRAINT fk_feature_dtype FOREIGN KEY (dtype) REFERENCES dtype(dtype),
 
     CONSTRAINT uniq_feature_schemaid_name UNIQUE (schema_id, name)
-)
+);
