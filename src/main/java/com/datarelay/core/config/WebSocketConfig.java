@@ -14,14 +14,12 @@ public class WebSocketConfig {
     @Bean
     public SimpleUrlHandlerMapping handlerMapping(
         WebSocketHandler echoHandler,
-        WebSocketHandler chatHandler,
-        WebSocketHandler orderHandler
+        WebSocketHandler dataStreamHandler
     ) {
         Map<String, WebSocketHandler> map = new HashMap<>();
         // endpoints
         map.put("/ws/echo", echoHandler);
-        map.put("/ws/chat", chatHandler);
-        map.put("/ws/order", orderHandler);
+        map.put("/ws/stream", dataStreamHandler);
 
         SimpleUrlHandlerMapping mapping = new SimpleUrlHandlerMapping();
         mapping.setUrlMap(map);
