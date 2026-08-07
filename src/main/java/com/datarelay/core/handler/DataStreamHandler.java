@@ -1,6 +1,5 @@
 package com.datarelay.core.handler;
 
-import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.stereotype.Component;
@@ -32,8 +31,9 @@ public class DataStreamHandler implements WebSocketHandler{
             .map(msg -> msg.getPayloadAsText())
             .flatMap(text -> {
                 DataStream data = objectMapper.readValue(text, new TypeReference<DataStream>() {});
+                UUID schemaId = data.getSchemaId();
 
-                return DataStreamService.addStreamingData("019fdd50-0fef-74ee-9b4f-aba9d146b8dc", data)
+                return DataStreamService.addStreamingData(schemaId.toString(), data)
                     .map(savedData -> session.textMessage("data packet " + savedData.getStreamId() + " received"))
                     .onErrorResume(error -> {
                         log.error("Service error on {}: {}", session.getId(), error.getMessage());

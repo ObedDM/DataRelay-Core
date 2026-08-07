@@ -15,6 +15,7 @@ public class DataStream {
     
     @Id
     private UUID streamId;
+    private UUID schemaId;
     
     private Instant timestamp;
     private Map<String, Object> data;
