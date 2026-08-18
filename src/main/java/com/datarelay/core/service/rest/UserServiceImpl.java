@@ -48,7 +48,7 @@ public class UserServiceImpl implements UserService {
                     .flatMap(matches -> matches ? Mono.just(user) : Mono.error(new RuntimeException("Invalid credentials")))
             )
             .map(user -> {
-                String token = jwtService.generateToken(username);
+                String token = jwtService.generateToken(user.getUserId().toString());
 
                 ResponseCookie cookie = ResponseCookie.from("AUTH-TOKEN", token)
                     .httpOnly(true)

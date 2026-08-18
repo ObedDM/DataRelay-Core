@@ -3,6 +3,7 @@ package com.datarelay.core.entity;
 import java.time.Instant;
 import java.util.UUID;
 
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
@@ -31,6 +32,7 @@ public class DatasetSchema {
     @Column("description")
     private String description;
 
+    @CreatedDate
     @Column("created_at")
     private Instant createdAt;
 }

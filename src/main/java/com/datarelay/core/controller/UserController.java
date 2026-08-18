@@ -25,13 +25,13 @@ public class UserController {
     private final UserServiceImpl userServiceImpl;
 
     @PostMapping("/create")
-    public Mono<ResponseEntity<Object>> createUser(@RequestBody Map<String, String> requestBody) {
-        String username = requestBody.get("username");
-        String password = requestBody.get("password");
+    public Mono<ResponseEntity<Object>> createUser(@RequestBody User user) {
+        String username = user.getUsername();
+        String password = user.getPassword();
 
         return userServiceImpl.createNewUser(username, password)
-            .map(user -> {
-                return ResponseEntity.status(HttpStatus.CREATED).body((Object) user);
+            .map(newUser -> {
+                return ResponseEntity.status(HttpStatus.CREATED).body((Object) newUser);
             })
             .onErrorResume(error -> {
                 log.error("Service error on createUser: {}", error.getMessage());

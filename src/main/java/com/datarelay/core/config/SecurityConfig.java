@@ -29,6 +29,7 @@ public class SecurityConfig {
         .authorizeExchange(exchanges -> exchanges
             .pathMatchers("/auth/**").permitAll()
             .pathMatchers("/user/create").permitAll()
+            .pathMatchers("/schema/**").authenticated()
             .pathMatchers("/ws/**").authenticated()
             .anyExchange().authenticated()
         )
