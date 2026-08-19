@@ -1,7 +1,5 @@
 package com.datarelay.core.controller;
 
-import java.util.Map;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -9,10 +7,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.datarelay.core.dto.LoginDTO;
+import com.datarelay.core.dto.UserDTO;
 import com.datarelay.core.service.rest.UserService;
-import com.datarelay.core.service.rest.UserServiceImpl;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
@@ -25,9 +23,9 @@ public class AuthController {
     private final UserService userService;
 
     @PostMapping("/login")
-    public Mono<ResponseEntity<String>> login(@RequestBody LoginDTO requestBody) {
-        String username = requestBody.username();
-        String password = requestBody.password();
+    public Mono<ResponseEntity<String>> login(@Valid @RequestBody UserDTO credentials) {
+        String username = credentials.username();
+        String password = credentials.password();
         
         return userService.login(username, password)
             .map(token -> {

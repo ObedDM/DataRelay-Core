@@ -7,9 +7,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.datarelay.core.dto.UserDTO;
 import com.datarelay.core.entity.User;
 import com.datarelay.core.service.rest.UserService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
@@ -22,9 +24,9 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/create")
-    public Mono<ResponseEntity<Object>> createUser(@RequestBody User user) {
-        String username = user.getUsername();
-        String password = user.getPassword();
+    public Mono<ResponseEntity<Object>> createUser(@Valid @RequestBody UserDTO user) {
+        String username = user.username();
+        String password = user.password();
 
         return userService.createNewUser(username, password)
             .map(newUser -> {
