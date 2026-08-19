@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.datarelay.core.entity.DatasetSchema;
 import com.datarelay.core.security.JwtService;
-import com.datarelay.core.service.rest.SchemaServiceImpl;
+import com.datarelay.core.service.rest.SchemaService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,13 +24,13 @@ import reactor.core.publisher.Mono;
 @RequestMapping("/schema")
 @RequiredArgsConstructor
 public class SchemaController {
-    private final SchemaServiceImpl schemaServiceImpl;
+    private final SchemaService schemaService;
     private final JwtService jwtService;
 
     @PostMapping("/create")
     public Mono<ResponseEntity<Object>> createSchema(@RequestBody DatasetSchema schema, @CookieValue("AUTH-TOKEN") String token) {
         UUID userId = UUID.fromString(jwtService.extractId(token));
-        return schemaServiceImpl.createSchema(schema, userId)
+        return schemaService.createSchema(schema, userId)
             .map(savedSchema -> {
                 return ResponseEntity.status(HttpStatus.CREATED).body((Object) savedSchema);
             })

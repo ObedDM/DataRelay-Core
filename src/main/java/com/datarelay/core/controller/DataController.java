@@ -7,17 +7,20 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.datarelay.core.entity.User;
-import com.datarelay.core.service.rest.UserServiceImpl;
+import com.datarelay.core.service.rest.UserService;
+
+import lombok.RequiredArgsConstructor;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
+@RequiredArgsConstructor
 public class DataController {
 
     @Autowired
-    private UserServiceImpl UserService;
+    private final UserService userService;
 
     @GetMapping("/")
     public String home() {
@@ -26,7 +29,7 @@ public class DataController {
 
     @PostMapping("/create-user")
     public ResponseEntity<User> createUser(@RequestBody User userRequest) {
-        UserService.createNewUser(
+        userService.createNewUser(
             userRequest.getUsername(),
             userRequest.getPassword()
         );
