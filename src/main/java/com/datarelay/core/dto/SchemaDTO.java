@@ -10,14 +10,14 @@ import jakarta.validation.constraints.Size;
 
 public record SchemaDTO(
     @NotNull @Valid Schema schema,
-    @NotEmpty @Valid List<Feature> features
+    @NotEmpty @Valid List<Features> features
 ) {
     public record Schema(
         @NotBlank @Size(max=25) String name,
         String description
     ) {}
 
-    public record Feature(
+    public record Features(
         @NotBlank @Size(max=25) String name,
         @NotBlank String dtype,
         String position
