@@ -13,4 +13,5 @@ import reactor.core.publisher.Mono;
 public interface SchemaRepository extends R2dbcRepository<DatasetSchema, UUID> {
     Mono<DatasetSchema> findByName(String name);
     Mono<Boolean> existsByUserIdAndName(UUID userId, String name);
+    Mono<UUID> findSchemaIdByNameAndUserId(String name, UUID userId);
 }
