@@ -29,7 +29,4 @@ public class Feature {
 
     @Column("name")
     private String name;
-
-    @Column("position")
-    private int position;
 }

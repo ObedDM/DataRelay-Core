@@ -19,8 +19,7 @@ public record SchemaDTO(
 
     public record Features(
         @NotBlank @Size(max=25) String name,
-        @NotBlank String dtype,
-        String position
+        @NotBlank String dtype
     ) {}
 }
 
