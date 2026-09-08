@@ -10,6 +10,7 @@ import jakarta.validation.constraints.Size;
 
 public record SchemaDTO(
     @NotNull @Valid Schema schema,
+    @Valid List<Dimensions> dimensions,
     @NotEmpty @Valid List<Features> features
 ) {
     public record Schema(
@@ -19,7 +20,14 @@ public record SchemaDTO(
 
     public record Features(
         @NotBlank @Size(max=25) String name,
-        @NotBlank String dtype
+        @NotBlank String dtype,
+        @NotNull Integer position
+    ) {}
+
+    public record Dimensions(
+        @NotBlank @Size(max=25) String name,
+        @NotBlank String dtype,
+        @NotNull Integer axisOrder
     ) {}
 }
 

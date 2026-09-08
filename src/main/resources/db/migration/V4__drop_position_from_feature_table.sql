@@ -1,1 +1,0 @@
-ALTER TABLE feature DROP COLUMN position

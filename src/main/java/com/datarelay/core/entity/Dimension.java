@@ -1,41 +1,35 @@
 package com.datarelay.core.entity;
 
-import java.time.Instant;
 import java.util.UUID;
-
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table("ds_schema")
-public class DatasetSchema {
-    
+@Table("dimension")
+public class Dimension {
+
     @Id
+    @Column("dimension_id")
+    private UUID dimensionId;
+
+    // foreign key
     @Column("schema_id")
     private UUID schemaId;
 
     // foreign key
-    @Column("user_id")
-    private UUID userId;
+    @Column("dtype")
+    private String dtype;
 
     @Column("name")
     private String name;
 
-    @Column("description")
-    private String description;
-
-    @CreatedDate
-    @Column("created_at")
-    private Instant createdAt;
-
-    @Column("has_index")
-    private Boolean hasIndex;
+    @Column("axis_order")
+    private Integer axisOrder;
 }

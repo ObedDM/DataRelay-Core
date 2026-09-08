@@ -2,6 +2,7 @@ package com.datarelay.core.controller;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
@@ -14,7 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.datarelay.core.dto.SchemaDTO;
 import com.datarelay.core.entity.DatasetSchema;
+import com.datarelay.core.entity.Dimension;
 import com.datarelay.core.entity.Feature;
+import com.datarelay.core.mapper.DimensionsMapper;
 import com.datarelay.core.mapper.FeaturesMapper;
 import com.datarelay.core.mapper.SchemaMapper;
 import com.datarelay.core.security.JwtService;
@@ -34,20 +37,27 @@ public class SchemaController {
     private final JwtService jwtService;
     private final SchemaMapper schemaMapper;
     private final FeaturesMapper featuresMapper;
+    private final DimensionsMapper dimensionsMapper;
 
     @PostMapping("/create")
     public Mono<ResponseEntity<Object>> createSchema(@Valid @RequestBody SchemaDTO schema, @CookieValue("AUTH-TOKEN") String token) {
         UUID userId = UUID.fromString(jwtService.extractId(token));
         DatasetSchema newSchema = schemaMapper.toEntity(schema.schema());
+        List<Dimension> dimensionList = Optional.ofNullable(schema.dimensions())
+            .map(dimensionsMapper::toEntity)
+            .orElseGet(List::of);
         List<Feature> featureList = featuresMapper.toEntity(schema.features());
 
-        return schemaService.createSchema(newSchema, featureList, userId)
+        System.out.println(dimensionList);
+
+        return schemaService.createSchema(newSchema, featureList, dimensionList, userId)
             .map(savedSchema -> {
                 return ResponseEntity.status(HttpStatus.CREATED).body((Object) savedSchema);
             })
             .onErrorResume(error -> {
-                log.error("Service error on createSchema: {}", error.getMessage());
+                log.error("Service error on createSchema: {}", error.getCause().getMessage());
                 return Mono.just(ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Could not create schema"));
             });
     }
 }
+

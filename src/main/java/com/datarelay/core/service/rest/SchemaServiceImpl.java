@@ -1,12 +1,17 @@
 package com.datarelay.core.service.rest;
 
+import java.sql.Savepoint;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.datarelay.core.entity.Feature;
 import com.datarelay.core.entity.DatasetSchema;
+import com.datarelay.core.entity.Dimension;
+import com.datarelay.core.repository.sql.DimensioneRepository;
 import com.datarelay.core.repository.sql.FeatureRepository;
 import com.datarelay.core.repository.sql.SchemaRepository;
 
@@ -21,6 +26,7 @@ import reactor.core.publisher.Mono;
 public class SchemaServiceImpl implements SchemaService {
     private final SchemaRepository schemaRepository;
     private final FeatureRepository featureRepository;
+    private final DimensioneRepository dimensionRepository;
     
     @Override
     public Flux<DatasetSchema> getUserSchemas() {
@@ -28,16 +34,40 @@ public class SchemaServiceImpl implements SchemaService {
     }
 
     @Override
-    public Mono<DatasetSchema> createSchema(DatasetSchema schema, List<Feature> features, UUID userId) {
+    @Transactional
+    public Mono<DatasetSchema> createSchema(DatasetSchema schema, List<Feature> features, List<Dimension> dimensions, UUID userId) {
         schema.setUserId(userId);
+
+        if (dimensions.isEmpty())
+            schema.setHasIndex(true);
+
+        else
+            schema.setHasIndex(false);
+        System.out.println(dimensions);
+        
         
         return schemaRepository.save(schema)
             .flatMap(savedSchema -> {
+                Mono<Void> saveDimensions = Mono.empty();
+                Mono<Void> saveFeatures = Mono.empty();
+
                 for (Feature feature : features) {
                     feature.setSchemaId(savedSchema.getSchemaId());
+                    System.out.println(feature);
                 }
 
-                return featureRepository.saveAll(features).collectList()
+                if (!dimensions.isEmpty()) {
+                    for (Dimension dimension : dimensions) {
+                        dimension.setSchemaId(savedSchema.getSchemaId());
+                        System.out.println(dimension);
+                    }
+
+                    saveDimensions = dimensionRepository.saveAll(dimensions).then();
+                }
+
+                saveFeatures = featureRepository.saveAll(features).then();
+
+                return Mono.when(saveDimensions, saveFeatures)
                     .thenReturn(savedSchema);
             });
     }
