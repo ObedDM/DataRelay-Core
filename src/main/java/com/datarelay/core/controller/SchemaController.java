@@ -48,8 +48,6 @@ public class SchemaController {
             .orElseGet(List::of);
         List<Feature> featureList = featuresMapper.toEntity(schema.features());
 
-        System.out.println(dimensionList);
-
         return schemaService.createSchema(newSchema, featureList, dimensionList, userId)
             .map(savedSchema -> {
                 return ResponseEntity.status(HttpStatus.CREATED).body((Object) savedSchema);

@@ -42,9 +42,7 @@ public class SchemaServiceImpl implements SchemaService {
             schema.setHasIndex(true);
 
         else
-            schema.setHasIndex(false);
-        System.out.println(dimensions);
-        
+            schema.setHasIndex(false);        
         
         return schemaRepository.save(schema)
             .flatMap(savedSchema -> {
@@ -53,13 +51,11 @@ public class SchemaServiceImpl implements SchemaService {
 
                 for (Feature feature : features) {
                     feature.setSchemaId(savedSchema.getSchemaId());
-                    System.out.println(feature);
                 }
 
                 if (!dimensions.isEmpty()) {
                     for (Dimension dimension : dimensions) {
                         dimension.setSchemaId(savedSchema.getSchemaId());
-                        System.out.println(dimension);
                     }
 
                     saveDimensions = dimensionRepository.saveAll(dimensions).then();
