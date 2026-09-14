@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.UUID;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -16,6 +17,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.datarelay.core.entity.User;
 import com.datarelay.core.repository.sql.UserRepository;
+import com.datarelay.core.security.JwtService;
 import com.datarelay.core.service.rest.UserServiceImpl;
 
 import reactor.core.publisher.Mono;
@@ -27,17 +29,26 @@ public class UserServiceImplTest {
     private UserRepository userRepository;
     @Mock
     private BCryptPasswordEncoder encoder;
+    @Mock 
+    private JwtService jwtService;
 
     @InjectMocks
     private UserServiceImpl userService;
 
     public String PASSWORD = "password123";
     public String HASHED_PASSWORD = "$2a$12$DSlDCwObzcc7DUoQ5Zp3A.0erlHOk32OKMcmusu/11yMSPgh3N.yW";
+    public UUID USER_ID = UUID.randomUUID();
+    public String TOKEN = "token-" + USER_ID.toString();
 
     public User USER = User.builder()
         .username("myUser")
         .password(HASHED_PASSWORD)
         .build();
+
+    @BeforeEach
+    void setUp() {
+        USER.setUserId(null); // this is done as first login test change the value of the User's userId
+    }
 
     @Test
     void createNewUser_WhenUsernameDoesNotExist_ReturnSavedUser() {
@@ -71,4 +82,33 @@ public class UserServiceImplTest {
         verify(encoder, never()).encode(any());
         verify(userRepository, never()).save(any());
     }
+
+    // change this to returns cookie later on as returns token is only for development atm
+    @Test
+    void login_WhenUserFoundAndPasswordMatches_ReturnsToken() {
+        USER.setUserId(USER_ID);
+
+        when(userRepository.findByUsername(USER.getUsername()))
+            .thenReturn(Mono.just(USER));
+
+        when(encoder.matches(PASSWORD, HASHED_PASSWORD))
+            .thenReturn(true);
+
+        when(jwtService.generateToken(USER_ID.toString()))
+            .thenReturn(TOKEN);
+
+        StepVerifier.create(userService.login(USER.getUsername(), PASSWORD))
+            .expectNext(TOKEN)
+            .verifyComplete();
+
+        verify(userRepository).findByUsername(USER.getUsername());
+        verify(encoder).matches(PASSWORD, HASHED_PASSWORD);
+        verify(jwtService).generateToken(USER_ID.toString());
+    }
+
+    //@Test 
+    //void login_WhenUserFoundAndPasswordDoesNotMatch_ThrowsException() {}
+
+    //@Test 
+    //void login_WhenUserNotFound_ThrowsException() {}
 }
