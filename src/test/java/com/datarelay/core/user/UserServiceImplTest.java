@@ -3,6 +3,7 @@ package com.datarelay.core.user;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.UUID;
@@ -106,9 +107,35 @@ public class UserServiceImplTest {
         verify(jwtService).generateToken(USER_ID.toString());
     }
 
-    //@Test 
-    //void login_WhenUserFoundAndPasswordDoesNotMatch_ThrowsException() {}
+    @Test 
+    void login_WhenUserFoundAndPasswordDoesNotMatch_ThrowsException() {
 
-    //@Test 
-    //void login_WhenUserNotFound_ThrowsException() {}
+        when(userRepository.findByUsername(USER.getUsername()))
+            .thenReturn(Mono.just(USER));
+
+        when(encoder.matches(PASSWORD, HASHED_PASSWORD))
+            .thenReturn(false);
+
+        StepVerifier.create(userService.login(USER.getUsername(), PASSWORD))
+            .expectErrorMessage("Invalid credentials")
+            .verify();
+
+        verify(userRepository).findByUsername(USER.getUsername());
+        verify(encoder).matches(PASSWORD, HASHED_PASSWORD);
+        verifyNoInteractions(jwtService);
+    }
+
+    @Test 
+    void login_WhenUserNotFound_ThrowsException() {
+        when(userRepository.findByUsername(USER.getUsername()))
+            .thenReturn(Mono.empty());
+
+        StepVerifier.create(userService.login(USER.getUsername(), PASSWORD))
+            .expectErrorMessage("Username not found")
+            .verify();
+
+        verify(userRepository).findByUsername(USER.getUsername());
+        verifyNoInteractions(encoder);
+        verifyNoInteractions(jwtService);
+    }
 }
