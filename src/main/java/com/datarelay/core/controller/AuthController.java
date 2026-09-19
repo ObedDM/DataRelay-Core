@@ -1,6 +1,10 @@
 package com.datarelay.core.controller;
 
+import java.time.Duration;
+
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -41,7 +45,17 @@ public class AuthController {
         
         return userService.login(username, password)
             .map(token -> {
-                return ResponseEntity.status(HttpStatus.OK).body(token); //remove token from body when setting cookie
+                ResponseCookie cookie = ResponseCookie.from("AUTH-TOKEN", token)
+                    .httpOnly(true)
+                    .secure(false)
+                    .path("/")
+                    .maxAge(Duration.ofDays(1))
+                    .sameSite("Lax")
+                    .build();
+
+                return ResponseEntity.ok()
+                    .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                    .body(token);
             })
             .onErrorResume(error -> {
                 log.error("Service error on login: {}", error.getMessage());

@@ -1,8 +1,5 @@
 package com.datarelay.core.service.rest;
 
-import java.time.Duration;
-
-import org.springframework.http.ResponseCookie;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -47,22 +44,6 @@ public class UserServiceImpl implements UserService {
                     .subscribeOn(Schedulers.boundedElastic())
                     .flatMap(matches -> matches ? Mono.just(user) : Mono.error(new RuntimeException("Invalid credentials")))
             )
-            .map(user -> {
-                String token = jwtService.generateToken(user.getUserId().toString());
-
-                ResponseCookie cookie = ResponseCookie.from("AUTH-TOKEN", token)
-                    .httpOnly(true)
-                    .secure(false) // cambiar a true
-                    .path("/")
-                    .maxAge(Duration.ofDays(1))
-                    .build();
-
-                /* return Mono.just(ResponseEntity.ok()
-                .header(HttpHeaders.SET_COOKIE, cookie.toString())
-                .body(token);
-                */
-
-                return token;
-            });
+            .map(user -> jwtService.generateToken(user.getUserId().toString()));
     }
 }
