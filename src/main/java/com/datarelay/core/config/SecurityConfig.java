@@ -15,6 +15,13 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final JwtAuthFilter jwtAuthFilter;
+
+    private static final String[] SWAGGER_LIST = {
+        "/v3/api-docs/**",
+        "/swagger-ui/**",
+        "/swagger-ui.html",
+        "/webjars/**"
+    };
     
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
@@ -29,6 +36,7 @@ public class SecurityConfig {
         .authorizeExchange(exchanges -> exchanges
             .pathMatchers("/auth/**").permitAll()
             .pathMatchers("/user/create").permitAll()
+            .pathMatchers(SWAGGER_LIST).permitAll()
             .pathMatchers("/schema/**").authenticated()
             .pathMatchers("/ws/**").authenticated()
             .anyExchange().authenticated()
