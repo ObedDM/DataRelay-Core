@@ -15,6 +15,7 @@ import com.datarelay.core.dto.UserDTO;
 import com.datarelay.core.service.rest.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -35,8 +36,11 @@ public class AuthController {
 
     @Operation(summary = "User login", description = "Handles user credentials and logs in user, returning a token")
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "User logged in"),
-        @ApiResponse(responseCode = "401", description = "Invalid user credentials", content = @Content(mediaType = "text/plain", schema = @Schema(type = "string", example = "Invalid credentials")))
+        @ApiResponse(responseCode = "200", description = "User logged in successfully",
+            headers = @Header(name = "Set-Cookie", description = "Sets HttpOnly JWT Cookie"),
+            content = @Content(mediaType = "text/plain", schema = @Schema(type = "string", example = "Login Successful"))),
+        @ApiResponse(responseCode = "401", description = "Invalid user credentials",
+            content = @Content(mediaType = "text/plain", schema = @Schema(type = "string", example = "Invalid credentials")))
     })
     @PostMapping("/login")
     public Mono<ResponseEntity<String>> login(@Valid @RequestBody UserDTO credentials) {
@@ -55,7 +59,7 @@ public class AuthController {
 
                 return ResponseEntity.ok()
                     .header(HttpHeaders.SET_COOKIE, cookie.toString())
-                    .body(token);
+                    .body("Login Successful");
             })
             .onErrorResume(error -> {
                 log.error("Service error on login: {}", error.getMessage());
